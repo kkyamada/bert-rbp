@@ -78,7 +78,8 @@ python3 run_finetune_bertrbp.py \
 	--num_gpu 4 \
 	--num_node 1
 ```
-Then, run the following script to compute the prediction performance of each BERT-RBP. Scores will be recorded as `eval_results_prediction.txt` file in the `$MODEL_PATH`. 
+## 3.3 Measure prediction performance
+Run the following script to compute the prediction performance of each BERT-RBP. Scores will be recorded as `eval_results_prediction.txt` file in the `$MODEL_PATH`. 
 ```
 export KMER=3
 export MODEL_PATH=../datasets/TIAL1/finetuned_model
