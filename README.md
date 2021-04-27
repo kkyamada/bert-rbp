@@ -121,7 +121,6 @@ python3 run_finetune_bertrbp.py \
 	--model_name_or_path $MODEL_PATH \
 	--task_name dnaprom \
 	--do_analyze_regiontype \
-	--visualize_data_dir $DATA_PATH \
 	--data_dir $DATA_PATH \
 	--max_seq_length 101 \
 	--per_gpu_pred_batch_size 128 \
@@ -149,7 +148,6 @@ python3 run_finetune_bertrbp.py \
 	--model_name_or_path $MODEL_PATH \
 	--task_name dnaprom \
 	--do_analyze_regiontype_specific \
-	--visualize_data_dir $DATA_PATH \
 	--data_dir $DATA_PATH \
 	--max_seq_length 101 \
 	--per_gpu_pred_batch_size 128 \
@@ -175,7 +173,6 @@ python3 run_finetune_bertrbp.py \
 	--model_name_or_path $MODEL_PATH \
 	--task_name dnaprom \
 	--do_analyze_regionboundary \
-	--visualize_data_dir $DATA_PATH \
 	--data_dir $DATA_PATH \
 	--max_seq_length 101 \
 	--per_gpu_pred_batch_size 128 \
@@ -202,7 +199,6 @@ python3 run_finetune_bertrbp.py \
 	--model_name_or_path $MODEL_PATH \
 	--task_name dnaprom \
 	--do_analyze_rnastructure \
-	--visualize_data_dir $DATA_PATH \
 	--data_dir $DATA_PATH \
 	--max_seq_length 101 \
 	--per_gpu_pred_batch_size 128 \
