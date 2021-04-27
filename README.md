@@ -184,7 +184,7 @@ python3 run_finetune_bertrbp.py \
 --num_node 1  \
 --rbp_name $RBP
 ```
-The results of analysis will be exported to the `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file. When you further conduct detailed analysis, replace the `--do_analyze_regionboundary` to `--do_analyze_regionboundary_specific`.
+The results of analysis will be exported to the `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file. When you further conduct detailed analysis, replace the `--do_analyze_regionboundary` to `--do_analyze_regionboundary_specific` and specify heads with `--specific_heads $SPECIFIC_HEADS`. Note that `export SPECIFIC_HEADS=”(1,2),(3,4)”` (the 2nd head in the 1st layer and 4th head in the 3rd layer, in this example) should be defined at the beginning. 
 
 ## 4.4 Secondary structure analysis
 Note that you need to install LinearPartition before this section. RNA secondary structure analysis for each BERT-RBP can be conducted by running:
@@ -212,7 +212,7 @@ python3 run_finetune_bertrbp.py \
 --num_node 1 \
 --rbp_name $RBP
 ```
-The results of analysis will be exported to the `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file. When you further conduct detailed analysis, replace the `--do_analyze_rnastructure` to `--do_analyze_rnastructure_specific`.
+The results of analysis will be exported to the `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file. When you further conduct detailed analysis, replace the `--do_analyze_rnastructure` to `--do_analyze_rnastructure_specific` and specify heads with `--specific_heads $SPECIFIC_HEADS`. Note that `export SPECIFIC_HEADS=”(1,2),(3,4)”` (the 2nd head in the 1st layer and 4th head in the 3rd layer, in this example) should be defined at the beginning.
 
 # 5. Citations
 If you used BERT-RBP in your research, please kindly cite the following paper.
@@ -249,3 +249,5 @@ Also, the following papers are major prior works on which our research is based.
   url    = "http://dx.doi.org/10.1186/s12864-020-07291-6"
 }
 ```
+
+![image](https://user-images.githubusercontent.com/70200890/116222943-00762400-a78a-11eb-89aa-53617cd21835.png)
