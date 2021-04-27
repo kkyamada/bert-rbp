@@ -4,8 +4,8 @@ import numpy as np
 import subprocess
 import re
 import sys
-sys.path.append('../motif')
-sys.path.append('../attention_analysis')
+sys.path.append(os.path.join(os.path.dirname(__file__), '../motif'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../attention_analysis'))
 from motif_utils import kmer2seq
 import lib_forgi
 
