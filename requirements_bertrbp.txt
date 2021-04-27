@@ -1,0 +1,21 @@
+torch==1.4.0
+torchvision==0.5.0
+tensorboardX
+tensorboard
+scikit-learn==0.22.2
+seqeval
+pyahocorasick
+scipy
+statsmodels
+biopython
+pandas
+pybedtools
+sentencepiece==0.1.91
+# manually curated
+boto3
+filelock
+tokenizers
+sacremoses
+# for visualization
+matplotlib
+seaborn
