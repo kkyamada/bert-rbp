@@ -38,7 +38,7 @@ If you were conducting the RNA secondary structure analysis (section 4.4 of this
 
 # 3. Fine-tuning and evaluation
 ## 3.1 Download pre-trained DNABERT
-Download and unzip the pre-trained DNABERT3 by follwoing the instruction at https://github.com/jerryji1993/DNABERT.
+Download and unzip the pre-trained DNABERT3 by follwoing the instruction [here](https://github.com/jerryji1993/DNABERT).
 If you have skipped 2.1 Data preprocessing, unzip our dataset file by running the following command.
 ```
 tar xzf sample_dataset.tar.gz
@@ -217,12 +217,12 @@ The results of analysis will be exported to the `$PRED_PATH`. To visualize the r
 # 5. Citations
 If you used BERT-RBP in your research, please kindly cite the following paper.
 
-'''
+```
 to be updated
-'''
+```
 
 Also, the following papers are major prior works on which our research is based.
-'''
+```
 @ARTICLE{Ji2021-ie,
   title    = "{DNABERT}: pre-trained Bidirectional Encoder Representations from Transformers model for {DNA-language} in genome",
   author   = "Ji, Yanrong and Zhou, Zhihan and Liu, Han and Davuluri, Ramana V",
@@ -233,8 +233,8 @@ Also, the following papers are major prior works on which our research is based.
   language = "en",
   url     = "http://dx.doi.org/10.1093/bioinformatics/btab083"
 }
-'''
-'''
+```
+```
 @ARTICLE{Pan2020-he,
   title     = "{RBPsuite}: {RNA-protein} binding sites prediction suite based
                on deep learning",
@@ -249,4 +249,6 @@ Also, the following papers are major prior works on which our research is based.
   language  = "en",
   url    = "http://dx.doi.org/10.1186/s12864-020-07291-6"
 }
-'''
+```
+
+![Uploading image.png…]()
