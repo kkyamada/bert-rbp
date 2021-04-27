@@ -249,5 +249,3 @@ Also, the following papers are major prior works on which our research is based.
   url    = "http://dx.doi.org/10.1186/s12864-020-07291-6"
 }
 ```
-
-![image](https://user-images.githubusercontent.com/70200890/116222943-00762400-a78a-11eb-89aa-53617cd21835.png)
