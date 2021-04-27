@@ -1,5 +1,5 @@
 import sys
-sys.path.append('./motifs')
+sys.path.append(os.path.join(os.path.dirname(__file__), '../motif'))
 from motif_utils import seq2kmer
 import argparse
 import numpy as np
