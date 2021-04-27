@@ -105,7 +105,7 @@ python3 run_finetune_bertrbp.py \
 
 # 4. Attention analysis
 ## 4.1 Region type annotation
-For TIAL1 and EWSR1, annotation files are contained in the `sample_dataset/RBP/nontraining_sample_finetune` as `annotation.npy`. When creating annotation files of your interest, refer to the above file format or see the instruction in the `annotations.ipynb` file.
+For TIAL1 and EWSR1, annotation files are contained in the `sample_dataset/RBP/nontraining_sample_finetune` as `annotations.npy`. When creating annotation files of your interest, refer to the above file format or see the instruction in the `annotations.ipynb` file.
 
 ## 4.2 Region type analysis
 After fine-tuning, you can conduct region type analysis on the specified BERT-RBP  by running: 
