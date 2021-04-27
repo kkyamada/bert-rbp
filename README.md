@@ -13,7 +13,7 @@ Install the required packages by running:
 git clone https://github.com/kkyamada/bert-rbp
 cd bert-rbp
 python3 -m pip install –editable .
-python3 -m pip install -r requirements.txt
+python3 -m pip install -r requirements_bertrbp.txt
 ```
 
 # 2. Data preprocessing and installation
