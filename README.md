@@ -240,7 +240,6 @@ Also, the following papers are major prior works on which our research is based.
                on deep learning",
   author    = "Pan, Xiaoyong and Fang, Yi and Li, Xianfeng and Yang, Yang and Shen, Hong-Bin",
   journal   = "BMC genomics",
-  publisher = "Springer",
   volume    =  21,
   number    =  1,
   pages     = "884",
