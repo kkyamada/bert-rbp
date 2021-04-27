@@ -51,8 +51,8 @@ cd examples
 
 export KMER=3
 export MODEL_PATH=PATH_TO_THE_PRETRAINED_MODEL
-export DATA_PATH=../datasets/TIAL1/training_sample_finetune
-export OUTPUT_PATH=../datasets/TIAL1/finetuned_model
+export DATA_PATH=../sample_dataset/TIAL1/training_sample_finetune
+export OUTPUT_PATH=../sample_dataset/TIAL1/finetuned_model
 
 python3 run_finetune_bertrbp.py \
 	--model_type dna \
@@ -82,8 +82,8 @@ python3 run_finetune_bertrbp.py \
 Run the following script to compute the prediction performance of each BERT-RBP. Scores will be recorded as `eval_results_prediction.txt` file in the `$MODEL_PATH`. 
 ```
 export KMER=3
-export MODEL_PATH=../datasets/TIAL1/finetuned_model
-export DATA_PATH=../datasets/TIAL1/test_sample_finetune
+export MODEL_PATH=../sample_dataset/TIAL1/finetuned_model
+export DATA_PATH=../sample_dataset/TIAL1/test_sample_finetune
 
 python3 run_finetune_bertrbp.py \
 	--model_type dna \
@@ -111,9 +111,9 @@ For TIAL1 and EWSR1, annotation files are contained in the `sample_dataset/RBP/n
 After fine-tuning, you can conduct region type analysis on the specified BERT-RBP  by running: 
 ```
 export RBP=TIAL1
-export MODEL_PATH=../datasets/TIAL1/finetuned_model
-export DATA_PATH=../datasets/TIAL1/nontraining_sample_finetune
-export PRED_PATH=../datasets/TIAL1/finetuned_model/analyze_regiontype 
+export MODEL_PATH=../sample_dataset/TIAL1/finetuned_model
+export DATA_PATH=../sample_dataset/TIAL1/nontraining_sample_finetune
+export PRED_PATH=../sample_dataset/TIAL1/finetuned_model/analyze_regiontype 
 
 python3 run_finetune_bertrbp.py \
 	--model_type dna \
@@ -137,9 +137,9 @@ The results of analysis will be exported to the `$PRED_PATH`. To visualize the r
 For detailed analysis, run the following command:
 ```
 export RBP=TIAL1
-export MODEL_PATH=../datasets/TIAL1/finetuned_model
-export DATA_PATH=../datasets/TIAL1/nontraining_sample_finetune
-export PRED_PATH=../datasets/TIAL1/finetuned_model/analyze_regiontype 
+export MODEL_PATH=../sample_dataset/TIAL1/finetuned_model
+export DATA_PATH=../sample_dataset/TIAL1/nontraining_sample_finetune
+export PRED_PATH=../sample_dataset/TIAL1/finetuned_model/analyze_regiontype 
 export SPECIFIC_HEADS="(1,9,1),(2,9,11),(4,12,4),(5,12,4)"
 
 python3 run_finetune_bertrbp.py \
@@ -163,9 +163,9 @@ python3 run_finetune_bertrbp.py \
 ## 4.3 Region boundary analysis
 Region boundary analysis for each BERT-RBP can be conducted by running:
 ```
-export MODEL_PATH=../datasets/TIAL1/finetuned_model
-export DATA_PATH=../datasets/TIAL1/nontraining_sample_finetune
-export PRED_PATH=../datasets/TIAL1/finetuned_model/analyze_regionboundary 
+export MODEL_PATH=../sample_dataset/EWSR1/finetuned_model
+export DATA_PATH=../sample_dataset/EWSR1/nontraining_sample_finetune
+export PRED_PATH=../sample_dataset/EWSR1/finetuned_model/analyze_regionboundary 
 
 python3 run_finetune_bertrbp.py \
 	--model_type dna \
@@ -188,9 +188,9 @@ The results of analysis will be exported to the `$PRED_PATH`. To visualize the r
 ## 4.4 Secondary structure analysis
 Note that you need to install LinearPartition before this section. RNA secondary structure analysis for each BERT-RBP can be conducted by running:
 ```
-export MODEL_PATH=../datasets/EWSR1/finetuned_model
-export DATA_PATH=../datasets/EWSR1/nontraining_sample_finetune
-export PRED_PATH=../datasets/EWSR1/finetuned_model/analyze_rnastructure
+export MODEL_PATH=../datasets/HNRNPK/finetuned_model
+export DATA_PATH=../datasets/HNRNPK/nontraining_sample_finetune
+export PRED_PATH=../datasets/HNRNPK/finetuned_model/analyze_rnastructure
 export LINEARPARTITION_PATH=PATH_TO_LINEARPARTITION
 
 python3 run_finetune_bertrbp.py \
