@@ -55,28 +55,28 @@ export DATA_PATH=../datasets/TIAL1/training_sample_finetune
 export OUTPUT_PATH=../datasets/TIAL1/finetuned_model
 
 python3 run_finetune_bertrbp.py \
-    --model_type dna \
-    --tokenizer_name=dna$KMER \
-    --model_name_or_path $MODEL_PATH \
-    --task_name dnaprom \
-    --do_train \
-    --do_eval \
-    --data_dir $DATA_PATH \
-    --max_seq_length 101 \
-    --per_gpu_eval_batch_size=32   \
-    --per_gpu_train_batch_size=32   \
-    --learning_rate 2e-4 \
-    --num_train_epochs 3 \
-    --output_dir $OUTPUT_PATH \
-    --evaluate_during_training \
-    --logging_steps 100 \
-    --warmup_percent 0.1 \
-    --hidden_dropout_prob 0.1 \
-    --overwrite_output \
-    --weight_decay 0.01 \
-    --n_process 8 \
-    --num_gpu 4 \
-    --num_node 1
+	--model_type dna \
+	--tokenizer_name=dna$KMER \
+	--model_name_or_path $MODEL_PATH \
+	--task_name dnaprom \
+	--do_train \
+	--do_eval \
+	--data_dir $DATA_PATH \
+	--max_seq_length 101 \
+	--per_gpu_eval_batch_size=32   \
+	--per_gpu_train_batch_size=32   \
+	--learning_rate 2e-4 \
+	--num_train_epochs 3 \
+	--output_dir $OUTPUT_PATH \
+	--evaluate_during_training \
+	--logging_steps 100 \
+	--warmup_percent 0.1 \
+	--hidden_dropout_prob 0.1 \
+	--overwrite_output \
+	--weight_decay 0.01 \
+	--n_process 8 \
+	--num_gpu 4 \
+	--num_node 1
 ```
 Then, run the following script to compute the prediction performance of each BERT-RBP. Scores will be recorded as `eval_results_prediction.txt` file in the `$MODEL_PATH`. 
 ```
@@ -113,23 +113,24 @@ export RBP=TIAL1
 export MODEL_PATH=../datasets/TIAL1/finetuned_model
 export DATA_PATH=../datasets/TIAL1/nontraining_sample_finetune
 export PRED_PATH=../datasets/TIAL1/finetuned_model/analyze_regiontype 
+
 python3 run_finetune_bertrbp.py \
---model_type dna \
---tokenizer_name dna3 \
---model_name_or_path $MODEL_PATH \
---task_name dnaprom \
---do_analyze_regiontype \
---visualize_data_dir $DATA_PATH \
---data_dir $DATA_PATH \
---max_seq_length 101 \
---per_gpu_pred_batch_size 128 \
---output_dir $MODEL_PATH \
---predict_dir $PRED_PATH \
---n_process 8 \
---num_gpu 1 \
---num_node 1 \
---region_type 0 \
---rbp_name $RBP
+	--model_type dna \
+	--tokenizer_name dna3 \
+	--model_name_or_path $MODEL_PATH \
+	--task_name dnaprom \
+	--do_analyze_regiontype \
+	--visualize_data_dir $DATA_PATH \
+	--data_dir $DATA_PATH \
+	--max_seq_length 101 \
+	--per_gpu_pred_batch_size 128 \
+	--output_dir $MODEL_PATH \
+	--predict_dir $PRED_PATH \
+	--n_process 8 \
+	--num_gpu 1 \
+	--num_node 1 \
+	--region_type 0 \
+	--rbp_name $RBP
 ```
 The results of analysis will be exported to the `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file.
 
@@ -142,21 +143,21 @@ export PRED_PATH=../datasets/TIAL1/finetuned_model/analyze_regiontype
 export SPECIFIC_HEADS="(1,9,1),(2,9,11),(4,12,4),(5,12,4)"
 
 python3 run_finetune_bertrbp.py \
---model_type dna \
---tokenizer_name dna3 \
---model_name_or_path $MODEL_PATH \
---task_name dnaprom \
---do_analyze_regiontype_specific \
---visualize_data_dir $DATA_PATH \
---data_dir $DATA_PATH \
---max_seq_length 101 \
---per_gpu_pred_batch_size 128 \
---output_dir $MODEL_PATH \
---predict_dir $PRED_PATH \
---n_process 8 \
---num_gpu 1 \
---num_node 1 \
---specific_heads $SPECIFIC_HEADS
+	--model_type dna \
+	--tokenizer_name dna3 \
+	--model_name_or_path $MODEL_PATH \
+	--task_name dnaprom \
+	--do_analyze_regiontype_specific \
+	--visualize_data_dir $DATA_PATH \
+	--data_dir $DATA_PATH \
+	--max_seq_length 101 \
+	--per_gpu_pred_batch_size 128 \
+	--output_dir $MODEL_PATH \
+	--predict_dir $PRED_PATH \
+	--n_process 8 \
+	--num_gpu 1 \
+	--num_node 1 \
+	--specific_heads $SPECIFIC_HEADS
 ```
 `$SPECIFIC_HEADS` indicates the heads where attention ratio were the highest for each region type (1=5’UTR, 2=3’UTR, 3=exon, 4=intron, 5=CDS). For instance, `(2,9,11)` indicates that the 11th head in the 9th layer showed the highest attention ratio for 3’UTR.
 
@@ -168,21 +169,21 @@ export DATA_PATH=../datasets/TIAL1/nontraining_sample_finetune
 export PRED_PATH=../datasets/TIAL1/finetuned_model/analyze_regionboundary 
 
 python3 run_finetune_bertrbp.py \
---model_type dna \
---tokenizer_name dna3 \
---model_name_or_path $MODEL_PATH \
---task_name dnaprom \
---do_analyze_regionboundary \
---visualize_data_dir $DATA_PATH \
---data_dir $DATA_PATH \
---max_seq_length 101 \
---per_gpu_pred_batch_size 128 \
---output_dir $MODEL_PATH \
---predict_dir $PRED_PATH \
---n_process 8 \
---num_gpu 1 \
---num_node 1  \
---rbp_name $RBP
+	--model_type dna \
+	--tokenizer_name dna3 \
+	--model_name_or_path $MODEL_PATH \
+	--task_name dnaprom \
+	--do_analyze_regionboundary \
+	--visualize_data_dir $DATA_PATH \
+	--data_dir $DATA_PATH \
+	--max_seq_length 101 \
+	--per_gpu_pred_batch_size 128 \
+	--output_dir $MODEL_PATH \
+	--predict_dir $PRED_PATH \
+	--n_process 8 \
+	--num_gpu 1 \
+	--num_node 1  \
+	--rbp_name $RBP
 ```
 The results of analysis will be exported to the `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file. When you further conduct detailed analysis, replace the `--do_analyze_regionboundary` to `--do_analyze_regionboundary_specific` and specify heads with `--specific_heads $SPECIFIC_HEADS`. Note that `export SPECIFIC_HEADS=”(1,2),(3,4)”` (the 2nd head in the 1st layer and 4th head in the 3rd layer, in this example) should be defined at the beginning. 
 
@@ -195,22 +196,22 @@ export PRED_PATH=../datasets/EWSR1/finetuned_model/analyze_rnastructure
 export LINEARPARTITION_PATH=PATH_TO_LINEARPARTITION
 
 python3 run_finetune_bertrbp.py \
---model_type dna \
---tokenizer_name dna3 \
---model_name_or_path $MODEL_PATH \
---task_name dnaprom \
---do_analyze_rnastructure \
---visualize_data_dir $DATA_PATH \
---data_dir $DATA_PATH \
---max_seq_length 101 \
---per_gpu_pred_batch_size 128 \
---output_dir $MODEL_PATH \
---predict_dir $PRED_PATH \
---path_to_linearpartition $LINEARPARTITION_PATH \
---n_process 8 \
---num_gpu 1 \
---num_node 1 \
---rbp_name $RBP
+	--model_type dna \
+	--tokenizer_name dna3 \
+	--model_name_or_path $MODEL_PATH \
+	--task_name dnaprom \
+	--do_analyze_rnastructure \
+	--visualize_data_dir $DATA_PATH \
+	--data_dir $DATA_PATH \
+	--max_seq_length 101 \
+	--per_gpu_pred_batch_size 128 \
+	--output_dir $MODEL_PATH \
+	--predict_dir $PRED_PATH \
+	--path_to_linearpartition $LINEARPARTITION_PATH \
+	--n_process 8 \
+	--num_gpu 1 \
+	--num_node 1 \
+	--rbp_name $RBP
 ```
 The results of analysis will be exported to the `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file. When you further conduct detailed analysis, replace the `--do_analyze_rnastructure` to `--do_analyze_rnastructure_specific` and specify heads with `--specific_heads $SPECIFIC_HEADS`. Note that `export SPECIFIC_HEADS=”(1,2),(3,4)”` (the 2nd head in the 1st layer and 4th head in the 3rd layer, in this example) should be defined at the beginning.
 
