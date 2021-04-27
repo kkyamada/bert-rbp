@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import argparse
 import sys
-sys.path.append('/home/keisuke-yamada/project_RNA_RBP/01_models/DNABERT/motif')
+sys.path.append(os.path.join(os.path.dirname(__file__), '../motif'))
 import motif_utils as utils
 
 
