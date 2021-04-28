@@ -798,13 +798,25 @@ def analyze_rnastructure_specific(args, model, tokenizer, kmer, prefix=""):
     for pred_task, pred_output_dir in zip(pred_task_names, pred_outputs_dirs):
         
         structures_and_heads = []
-        lines = re.findall("[0-9]+[,-][0-9]+", args.specific_heads)
+        if args.specific_heads:
+            lines = re.findall("[0-9]+[,-][0-9]+", args.specific_heads)
+            for structure_and_head in lines:
+                structure_and_head = structure_and_head.split(",")
+                structure_and_head = list(map(int, structure_and_head))
+                structure_and_head = list(np.array(structure_and_head) - 1)
+                structures_and_heads.append(structure_and_head)
+        else:
+            textfile = os.path.join(pred_output_dir, "analyze_rnastructure.txt")
+            with open(textfile, 'r') as f:
+                for line in f:
+                    structure_and_head = []
+                    if re.search("max_head: [0-9\-]+", line):
+                        max_head = re.findall("max_head: [0-9\-]+", line)[0]
+                        structure_and_head = [int(i) for i in re.findall("[0-9]+", max_head)]
+                        structures_and_heads.append(structure_and_head)
+            
         tsv_file_original = os.path.join(pred_output_dir, "analyze_rnastructure_specific_layer{}_head{}.tsv")
-        for structure_and_head in lines:
-            structure_and_head = structure_and_head.split(",")
-            structure_and_head = list(map(int, structure_and_head))
-            structure_and_head = list(np.array(structure_and_head) - 1)
-            structures_and_heads.append(structure_and_head)
+        for structure_and_head in structures_and_heads:
             tsv_file = tsv_file_original.format(structure_and_head[0]+1, structure_and_head[1]+1)
             with open(tsv_file, "w") as f:
                 f.write("structure\tattention\n")
@@ -1148,12 +1160,27 @@ def analyze_regionboundary_specific(args, model, tokenizer, kmer, prefix=""):
         '''
         regiontypes = ("5'UTR", "3'UTR", "exon", "intron", "CDS", "outside")
         regions_and_heads = []
-        lines = re.findall("[0-9]+[,-][0-9]+", args.specific_heads)
+        if args.specific_heads:
+            lines = re.findall("[1-9][,-][0-9]+[,-][0-9]+", args.specific_heads)
+            for region_and_head in lines:
+                region_and_head = region_and_head.split(",")
+                region_and_head = list(map(int, region_and_head))
+                regions_and_heads.append(region_and_head)
+        else:
+            textfile = os.path.join(pred_output_dir, "analyze_regionboundary.txt")
+            regions_and_heads = []
+            regiontypes = ("5'UTR", "3'UTR", "exon", "intron", "CDS")
+            index_regiontypes = {"5'UTR":1, "3'UTR":2, "exon":3, "intron":4, "CDS":5}
+            with open(textfile, 'r') as f:
+                for line in f:
+                    region_and_head = []
+                    if re.search("max_head: [0-9\-]+", line):
+                        max_head = re.findall("max_head: [0-9\-]+", line)[0]
+                        region_and_head = [int(i) for i in re.findall("[0-9]+", max_head)]
+                        regions_and_heads.append(region_and_head)
+            
         tsv_file_original = os.path.join(pred_output_dir, "analyze_regionboundary_specific_all_layer{}_head{}.tsv")
-        for region_and_head in lines:
-            region_and_head = region_and_head.split(",")
-            region_and_head = list(map(int, region_and_head))
-            regions_and_heads.append(region_and_head)
+        for region_and_head in regions_and_heads:
             tsv_file = tsv_file_original.format(region_and_head[0], region_and_head[1])
             with open(tsv_file, "w") as f:
                 f.write("regiontype\tattention\n")
@@ -1493,12 +1520,31 @@ def analyze_regiontypes_specific(args, model, tokenizer, kmer, prefix=""):
     for pred_task, pred_output_dir in zip(pred_task_names, pred_outputs_dirs):
         
         regions_and_heads = []
-        lines = re.findall("[1-9][,-][0-9]+[,-][0-9]+", args.specific_heads)
+        if args.specific_heads:
+            lines = re.findall("[1-9][,-][0-9]+[,-][0-9]+", args.specific_heads)
+            for region_and_head in lines:
+                region_and_head = region_and_head.split(",")
+                region_and_head = list(map(int, region_and_head))
+                regions_and_heads.append(region_and_head)
+        else:
+            textfile = os.path.join(pred_output_dir, "analyze_regiontype.txt")
+            regions_and_heads = []
+            regiontypes = ("5'UTR", "3'UTR", "exon", "intron", "CDS")
+            index_regiontypes = {"5'UTR":1, "3'UTR":2, "exon":3, "intron":4, "CDS":5}
+            with open(textfile, 'r') as f:
+                for line in f:
+                    region_and_head = []
+                    if re.match("region_type: [0-9a-zA-Z\']+, max_head: [0-9\-]+", line):
+                        for regiontype in regiontypes:
+                            if regiontype in line:
+                                region_and_head.append(index_regiontypes[regiontype])
+                                max_head = re.findall("max_head: [0-9\-]+", line)[0]
+                                max_head = [int(i) for i in re.findall("[0-9]+", max_head)]
+                                region_and_head.extend(max_head)
+                                regions_and_heads.append(region_and_head)
+        
         tsv_file_original = os.path.join(pred_output_dir, "analyze_regiontype_specific_type{}_layer{}_head{}.tsv")
-        for region_and_head in lines:
-            region_and_head = region_and_head.split(",")
-            region_and_head = list(map(int, region_and_head))
-            regions_and_heads.append(region_and_head)
+        for region_and_head in regions_and_heads:
             tsv_file = tsv_file_original.format(region_and_head[0], region_and_head[1], region_and_head[2])
             with open(tsv_file, "w") as f:
                 f.write("regiontype\tattention\n")
@@ -3750,7 +3796,6 @@ def main():
         if args.do_analyze_regiontype_specific:
             analyze_regiontypes_specific(args, model, tokenizer, prefix=prefix, kmer=kmer)
             '''
-            regiontype_vs_attention = analyze_regiontypes_specific(args, model, tokenizer, prefix=prefix, kmer=kmer)
             if args.output_visimage:
                 num_bins = 15
                 attention_max = np.max(regiontype_vs_attention[:,0,1])
@@ -3801,7 +3846,7 @@ def main():
                 heatmap_ylabels = heatmap_xlabels[::-1]
                 
                 for i in range(len(regiontypes)):
-                    sns.heatmap(np.flip(regiontype_matrix[i], axis=0), ax =ax[i])
+                    sns.heatmap(np.flip(regiontype_matrix[i], axis=0), ax =ax[i], center=1.0)
                     ax[i].set_xlabel("head")
                     ax[i].set_xlabel("layer")
                     ax[i].set_xticklabels(heatmap_xlabels)
@@ -3919,7 +3964,7 @@ def main():
                 # np.save(os.path.join(args.predict_dir, 'analyze_regiontype_negative_type{}.npy'.format(args.region_type)), regiontype_matrix_negative)
                 np.save(os.path.join(args.predict_dir, 'analyze_regionboundary_count_all.npy'), regionboundary_count)
                 np.save(os.path.join(args.predict_dir, 'analyze_regionboundary_count_negative_all.npy'), regionboundary_count_negative)
-            
+                
         logger.info("finished region boundary analysis:")
     
     # rnastructure analysis
