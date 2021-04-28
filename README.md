@@ -45,7 +45,7 @@ tar xzf sample_dataset.tar.gz
 ```
 
 ## 3.2 Fine-tuning
-For each RBP, run the following script to train BERT-RBP. The generated model will be saved to the `$OUTPUT_PATH`. Change the name of RBP in `$DATA_PATH` and `$OUTPUT_PATH` as you would like.
+For each RBP, run the following script to train BERT-RBP. The generated model will be saved to the `$OUTPUT_PATH`. Change the name of RBP in `$DATA_PATH` and `$OUTPUT_PATH` as you would like. Use the additional descriptor, `--do_train_from_scratch`, to train BERT-baseline, whose model parameters were randomly initialized.  
 ```
 cd examples
 
