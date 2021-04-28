@@ -50,7 +50,7 @@ For each RBP, run the following script to train BERT-RBP. The generated model wi
 cd examples
 
 export KMER=3
-export MODEL_PATH=PATH_TO_THE_PRETRAINED_MODEL
+export MODEL_PATH=PATH_TO_THE_PRETRAINED_DNABERT
 export DATA_PATH=../sample_dataset/TIAL1/training_sample_finetune
 export OUTPUT_PATH=../sample_dataset/TIAL1/finetuned_model
 
@@ -132,33 +132,7 @@ python3 run_finetune_bertrbp.py \
 	--region_type 0 \
 	--rbp_name $RBP
 ```
-The results of analysis will be exported to the `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file.
-
-For detailed analysis, run the following command:
-```
-export RBP=TIAL1
-export MODEL_PATH=../sample_dataset/TIAL1/finetuned_model
-export DATA_PATH=../sample_dataset/TIAL1/nontraining_sample_finetune
-export PRED_PATH=../sample_dataset/TIAL1/finetuned_model/analyze_regiontype 
-export SPECIFIC_HEADS="(1,9,1),(2,9,11),(4,12,4),(5,12,4)"
-
-python3 run_finetune_bertrbp.py \
-	--model_type dna \
-	--tokenizer_name dna3 \
-	--model_name_or_path $MODEL_PATH \
-	--task_name dnaprom \
-	--do_analyze_regiontype_specific \
-	--data_dir $DATA_PATH \
-	--max_seq_length 101 \
-	--per_gpu_pred_batch_size 128 \
-	--output_dir $MODEL_PATH \
-	--predict_dir $PRED_PATH \
-	--n_process 8 \
-	--num_gpu 1 \
-	--num_node 1 \
-	--specific_heads $SPECIFIC_HEADS
-```
-`$SPECIFIC_HEADS` indicates the heads where attention ratio were the highest for each region type (1=5’UTR, 2=3’UTR, 3=exon, 4=intron, 5=CDS). For instance, `(2,9,11)` indicates that the 11th head in the 9th layer showed the highest attention ratio for 3’UTR.
+The results of analysis will be exported to the `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file. For detailed analysis, replace the `--do_analyze_regiontype` to `--do_analyze_regiontype_specific`.
 
 ## 4.3 Region boundary analysis
 Region boundary analysis for each BERT-RBP can be conducted by running:
@@ -183,7 +157,7 @@ python3 run_finetune_bertrbp.py \
 	--num_node 1  \
 	--rbp_name $RBP
 ```
-The results of analysis will be exported to the `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file. When you further conduct detailed analysis, replace the `--do_analyze_regionboundary` to `--do_analyze_regionboundary_specific` and specify heads with `--specific_heads $SPECIFIC_HEADS`. Note that `export SPECIFIC_HEADS=”(1,2),(3,4)”` (the 2nd head in the 1st layer and 4th head in the 3rd layer, in this example) should be defined at the beginning. 
+The results of analysis will be exported to the `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file. When you further conduct detailed analysis, replace the `--do_analyze_regionboundary` to `--do_analyze_regionboundary_specific`.
 
 ## 4.4 Secondary structure analysis
 Note that you need to install LinearPartition before this section. RNA secondary structure analysis for each BERT-RBP can be conducted by running:
@@ -210,7 +184,7 @@ python3 run_finetune_bertrbp.py \
 	--num_node 1 \
 	--rbp_name $RBP
 ```
-The results of analysis will be exported to the `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file. When you further conduct detailed analysis, replace the `--do_analyze_rnastructure` to `--do_analyze_rnastructure_specific` and specify heads with `--specific_heads $SPECIFIC_HEADS`. Note that `export SPECIFIC_HEADS=”(1,2),(3,4)”` (the 2nd head in the 1st layer and 4th head in the 3rd layer, in this example) should be defined at the beginning.
+The results of analysis will be exported to the `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file. When you further conduct detailed analysis, replace the `--do_analyze_rnastructure` to `--do_analyze_rnastructure_specific`.
 
 # 5. Citations
 If you used BERT-RBP in your research, please kindly cite the following paper.
