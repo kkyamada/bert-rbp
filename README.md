@@ -1,5 +1,5 @@
 # BERT-RBP
-This repository includes implementations of BERT-RBP, a BERT-based model to predict RNA-RBP interactions. Please cite our paper as well as other dependencies if you use the codes. This repository is still under development, so please report us in case there were any issues.
+This repository includes implementations of BERT-RBP, a BERT-based model to predict RNA-RBP interactions. Please cite our paper as well as other dependencies if you use the codes. This repository is still under development, so please report to us in case there were any issues.
 
 # 1. Dependencies
 For building BERT-RBP:
@@ -38,7 +38,7 @@ If you were conducting the RNA secondary structure analysis (section 4.4 of this
 
 # 3. Fine-tuning and evaluation
 ## 3.1 Download pre-trained DNABERT
-Download and unzip the pre-trained DNABERT3 by follwoing the instruction [here](https://github.com/jerryji1993/DNABERT).
+Download and unzip the pre-trained DNABERT3 by following the instruction [here](https://github.com/jerryji1993/DNABERT).
 If you have skipped 2.1 Data preprocessing, unzip our dataset file by running the following command.
 ```
 tar xzf sample_dataset.tar.gz
@@ -132,7 +132,7 @@ python3 run_finetune_bertrbp.py \
 	--region_type 0 \
 	--rbp_name $RBP
 ```
-The results of analysis will be exported to the `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file. For detailed analysis, replace the `--do_analyze_regiontype` to `--do_analyze_regiontype_specific`.
+The results of the analysis will be exported to the `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file. For detailed analysis, replace the `--do_analyze_regiontype` to `--do_analyze_regiontype_specific`.
 
 ## 4.3 Region boundary analysis
 Region boundary analysis for each BERT-RBP can be conducted by running:
@@ -157,7 +157,7 @@ python3 run_finetune_bertrbp.py \
 	--num_node 1  \
 	--rbp_name $RBP
 ```
-The results of analysis will be exported to the `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file. When you further conduct detailed analysis, replace the `--do_analyze_regionboundary` to `--do_analyze_regionboundary_specific`.
+The results of the analysis will be exported to the `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file. When you further conduct detailed analysis, replace the `--do_analyze_regionboundary` to `--do_analyze_regionboundary_specific`.
 
 ## 4.4 Secondary structure analysis
 Note that you need to install LinearPartition before this section. RNA secondary structure analysis for each BERT-RBP can be conducted by running:
@@ -184,7 +184,7 @@ python3 run_finetune_bertrbp.py \
 	--num_node 1 \
 	--rbp_name $RBP
 ```
-The results of analysis will be exported to the `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file. When you further conduct detailed analysis, replace the `--do_analyze_rnastructure` to `--do_analyze_rnastructure_specific`.
+The results of the analysis will be exported to the `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file. When you further conduct detailed analysis, replace the `--do_analyze_rnastructure` with `--do_analyze_rnastructure_specific`.
 
 # 5. Citations
 If you used BERT-RBP in your research, please cite the following paper.
