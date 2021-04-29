@@ -187,10 +187,19 @@ python3 run_finetune_bertrbp.py \
 The results of analysis will be exported to the `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file. When you further conduct detailed analysis, replace the `--do_analyze_rnastructure` to `--do_analyze_rnastructure_specific`.
 
 # 5. Citations
-If you used BERT-RBP in your research, please kindly cite the following paper.
+If you used BERT-RBP in your research, please cite the following paper.
 
 ```
-to be updated
+@UNPUBLISHED{Yamada2021-ql,
+  title    = "Prediction of {RNA-protein} interactions using a nucleotide
+              language model",
+  author   = "Yamada, Keisuke and Hamada, Michiaki",
+  journal  = "bioRxiv",
+  pages    = "2021.04.27.441365",
+  month    =  apr,
+  year     =  2021,
+  language = "en"
+}
 ```
 
 Also, the following papers are major prior works on which our research is based.
