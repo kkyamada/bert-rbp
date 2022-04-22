@@ -1,0 +1,7 @@
+
+rnastructure_type: F (dangling start), max_head: 6-6
+rnastructure_type: T (dangling end), max_head: 7-5
+rnastructure_type: I (internal loop), max_head: 11-1
+rnastructure_type: H (hairpin loop), max_head: 11-1
+rnastructure_type: M (multi loop), max_head: 8-2
+rnastructure_type: S (stem), max_head: 4-2

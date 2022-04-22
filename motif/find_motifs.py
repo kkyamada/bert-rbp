@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import argparse
 import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), '../motif'))
+sys.path.append('./motif')
 import motif_utils as utils
 
 
@@ -40,6 +40,13 @@ def main():
         type=int,
         help="Specified minimum length threshold for contiguous region",
     )
+    
+    parser.add_argument(
+        "--max_len",
+        default=5,
+        type=int,
+        help="Specified maximum length threshold for contiguous region",
+    )
 
     parser.add_argument(
         "--pval_cutoff",
@@ -53,6 +60,13 @@ def main():
         default=3,
         type=int,
         help="Minimum instance inside motif to be filtered",
+    )
+    
+    parser.add_argument(
+        "--top_n_motif",
+        default=10,
+        type=int,
+        help="Number of best motifs to be saved",
     )
 
     parser.add_argument(
@@ -79,19 +93,32 @@ def main():
         action='store_true',
         help="Whether the indices of the motifs are only returned",
     )
+    
+    parser.add_argument(
+        "--kmer",
+        default=-1,
+        type=int,
+        help="kmer of input sequences",
+    )
+    
+    parser.add_argument(
+        "--dev_or_train",
+        default='dev',
+        type=str,
+        help="dev or train file",
+    )
 
-    # TODO: add the conditions
     args = parser.parse_args()
 
     atten_scores = np.load(os.path.join(args.predict_dir,"atten.npy"))
-    pred = np.load(os.path.join(args.predict_dir,"pred_results.npy"))
     dev = pd.read_csv(os.path.join(args.data_dir,"dev.tsv"),sep='\t')
+    if args.dev_or_train=='train':
+        dev = pd.read_csv(os.path.join(args.data_dir,"train.tsv"),sep='\t')
     dev.columns = ['sequence','label']
     dev['seq'] = dev['sequence'].apply(utils.kmer2seq)
     dev_pos = dev[dev['label'] == 1]
     dev_neg = dev[dev['label'] == 0]
     pos_atten_scores = atten_scores[dev_pos.index.values]
-    neg_atten_scores = atten_scores[dev_neg.index.values]
     assert len(dev_pos) == len(pos_atten_scores)
 
     
@@ -101,15 +128,19 @@ def main():
                                         pos_atten_scores,
                                         window_size = args.window_size,
                                         min_len = args.min_len,
+                                        max_len = args.max_len,
                                         pval_cutoff = args.pval_cutoff,
                                         min_n_motif = args.min_n_motif,
+                                        top_n_motif = args.top_n_motif,
                                         align_all_ties = args.align_all_ties,
                                         save_file_dir = args.save_file_dir,
                                         verbose = args.verbose,
-                                        return_idx  = args.return_idx
+                                        return_idx  = args.return_idx,
+                                        kmer = args.kmer
                                     )
 
 if __name__ == "__main__":
     main()
+
 
 

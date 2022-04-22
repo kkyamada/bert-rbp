@@ -29,7 +29,10 @@ def create_fasta_from_tsv(path_to_dev, num_start, num_end, path_to_fasta=None, t
     seq_data = pd.read_csv(filename, sep='\t')
     
     assert('sequence' in seq_data.columns)
-    seq_data = seq_data[num_start:num_end]
+    if num_end == -1:
+        seq_data = seq_data[num_start:]
+    else:
+        seq_data = seq_data[num_start:num_end]
     
     new_lines = ''
     for i, seq in enumerate(seq_data['sequence']):

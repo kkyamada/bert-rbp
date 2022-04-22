@@ -1,0 +1,11 @@
+
+region_type: 5'UTR, max_head: 6-8
+region_type: 5'UTR, min_head: 10-12
+region_type: 3'UTR, max_head: 9-2
+region_type: 3'UTR, min_head: 10-7
+region_type: exon, max_head: 9-2
+region_type: exon, min_head: 11-4
+region_type: intron, max_head: 10-7
+region_type: intron, min_head: 9-2
+region_type: CDS, max_head: 12-4
+region_type: CDS, min_head: 7-8

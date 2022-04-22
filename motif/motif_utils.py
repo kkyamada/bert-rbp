@@ -38,7 +38,7 @@ def seq2kmer(seq, k):
     kmers = " ".join(kmer)
     return kmers
 
-def contiguous_regions(condition, len_thres=5):
+def contiguous_regions(condition, len_thres=5, len_thres2=9):
     """
     Modified from and credit to: https://stackoverflow.com/a/4495197/3751373
     Finds contiguous True regions of the boolean array "condition". Returns
@@ -79,44 +79,33 @@ def contiguous_regions(condition, len_thres=5):
     
     # eliminate those not satisfying length of threshold
     idx = idx[np.argwhere((idx[:,1]-idx[:,0])>=len_thres).flatten()]
+    idx = idx[np.argwhere((idx[:,1]-idx[:,0])<=len_thres2).flatten()]
     return idx
-
-def find_high_attention(score, min_len=5, **kwargs):
-    """
-    With an array of attention scores as input, finds contiguous high attention 
-    sub-regions indices having length greater than min_len.
     
-    Arguments:
-    score -- numpy array of attention scores for a sequence
-
-    Keyword arguments:
-    min_len -- int, specified minimum length threshold for contiguous region 
-        (default 5)
-    **kwargs -- other input arguments:
-        cond -- custom conditions to filter/select high attention 
-            (list of boolean arrays)
+def find_high_attention(score, min_len=5, max_len=9, mean_val=-1, min_val=-1):
+    cond1, cond2 = None, None
+    # mean_val = 0
+    # min_val = 0
+    if mean_val==-1:
+        cond1 = (score > np.mean(score))
+    else:
+        cond1 = (score > mean_val)
     
-    Returns:
-    motif_regions -- indices of high attention regions in sequence
+    if min_val==-1:
+        cond2 = (score > 10*np.min(score))
+    else:
+        cond2 = (score > min_val)
 
-    """
-    
-    cond1 = (score > np.mean(score))
-    cond2 = (score > 10*np.min(score))
+        
     cond = [cond1, cond2]
     
     cond = list(map(all, zip(*cond)))
-    
-    if 'cond' in kwargs: # if input custom conditions, use them
-        cond = kwargs['cond']
-        if any(isinstance(x, list) for x in cond): # if input contains multiple conditions
-            cond = list(map(all, zip(*cond)))
     
     cond = np.asarray(cond)
         
 
     # find important contiguous region with high attention
-    motif_regions = contiguous_regions(cond,min_len)
+    motif_regions = contiguous_regions(cond, min_len, max_len)
     
     return motif_regions
 
@@ -148,8 +137,8 @@ def count_motif_instances(seqs, motifs, allow_multi_match=False):
         motif_count[key] = 0
     A.make_automaton()
     
-    #print(motifs)
-    #print(A)
+    # print(motifs)
+    # print(A)
     for seq in seqs:
         matches = sorted(map(itemgetter(1), A.iter(seq)))
         matched_seqs = []
@@ -276,66 +265,68 @@ def merge_motifs(motif_seqs, min_len=5, align_all_ties=True, **kwargs):
     
     from Bio import Align
     
-    ### TODO: modify algorithm to improve efficiency later
     aligner = Align.PairwiseAligner()
+    aligner.mismatch_score = -1
+    aligner.open_gap_score = -0.5
+    aligner.extend_gap_score = -0.5
     aligner.internal_gap_score = -10000.0 # prohibit internal gaps
-    
+
+    motif_seqs_list = sorted(motif_seqs, key=len).copy()
+    alignment_score_matrix = np.zeros([len(motif_seqs_list), len(motif_seqs_list)])
+    for i, motif_row in enumerate(motif_seqs_list):
+        for j, motif_column in enumerate(motif_seqs_list):
+            if motif_row != motif_column:
+                alignment=aligner.align(motif_row, motif_column)[0]
+                cond = max(min_len-2, len(motif_row)-2, len(motif_column)-2)
+                if 'cond' in kwargs:
+                    cond = kwargs['cond']
+                if alignment.score >= cond:
+                    alignment_score_matrix[i,j] += 1
+                    # alignment_score_matrix[i,j] += alignment.score
+
+    alignment_score_matrix = np.sum(alignment_score_matrix, axis=1)
+    thresh_score = sorted(alignment_score_matrix)[-int(len(alignment_score_matrix)*0.2)]
+
     merged_motif_seqs = {}
-    for motif in sorted(motif_seqs, key=len): # query motif
-        if not merged_motif_seqs: # if empty
-            merged_motif_seqs[motif] = motif_seqs[motif] # add first one
-        else: # not empty, then compare and see if can be merged
-            # first create all alignment scores, to find out max
-            alignments = []
-            key_motifs = []
-            for key_motif in merged_motif_seqs.keys(): # key motif
-                if motif != key_motif: # do not attempt to align to self
-                    # first is query, second is key within new dict
-                    # first is guaranteed to be length >= second after sorting keys
-                    alignment=aligner.align(motif, key_motif)[0] 
-                    
-                    # condition to declare successful alignment
-                    cond = max((min_len -1), 0.5 * min(len(motif), len(key_motif))) 
-                    
-                    if 'cond' in kwargs:
-                        cond = kwargs['cond'] # override
-                        
-                    if alignment.score >= cond: # exists key that can align
-                        alignments.append(alignment)
-                        key_motifs.append(key_motif)
+    merged_motif_dict = {}
+    for i, score in enumerate(alignment_score_matrix):
+        if score >= thresh_score:
+            # strong_key_motifs.append(motif_seqs[i])
+            merged_motif_seqs[motif_seqs_list[i]] = {}
+            merged_motif_seqs[motif_seqs_list[i]]["seq_idx"] = motif_seqs[motif_seqs_list[i]]["seq_idx"].copy()
+            merged_motif_seqs[motif_seqs_list[i]]["atten_region_pos"] = motif_seqs[motif_seqs_list[i]]["atten_region_pos"].copy()
+            merged_motif_dict[motif_seqs_list[i]] = [alignment_score_matrix[i], motif_seqs_list[i]]
+    
+    print(merged_motif_dict)
 
-            if alignments: # if aligned, find out alignment with maximum score and proceed
-                best_score = max(alignments, key=lambda alignment: alignment.score)
-                best_idx = [i for i, score in enumerate(alignments) if score == best_score]
-                
-                if align_all_ties:
-                    for i in best_idx:
-                        alignment = alignments[i]
-                        key_motif = key_motifs[i]
+    # for motif in sorted(motif_seqs, key=len): # query motif
+    for motif in motif_seqs_list: # query motif
+        alignments = []
+        key_motifs = []
+        for key_motif in merged_motif_seqs.keys(): # key motif
+            if motif != key_motif: # do not attempt to align to self
+                # first is query, second is key within new dict
+                # first is guaranteed to be length >= second after sorting keys
+                alignment=aligner.align(motif, key_motif)[0]
 
-                        # calculate offset to be added/subtracted from atten_region_pos
-                        left_offset = alignment.aligned[0][0][0] - alignment.aligned[1][0][0] # always query - key
-                        if (alignment.aligned[0][0][1] <= len(motif)) & \
-                            (alignment.aligned[1][0][1] == len(key_motif)): # inside
-                            right_offset = len(motif) - alignment.aligned[0][0][1]
-                        elif (alignment.aligned[0][0][1] == len(motif)) & \
-                            (alignment.aligned[1][0][1] < len(key_motif)): # left shift
-                            right_offset = alignment.aligned[1][0][1] - len(key_motif)
-                        elif (alignment.aligned[0][0][1] < len(motif)) & \
-                            (alignment.aligned[1][0][1] == len(key_motif)): # right shift
-                            right_offset = len(motif) - alignment.aligned[0][0][1]
+                # condition to declare successful alignment
+                cond = max(min_len-2, len(motif)-2, len(key_motif)-2)
 
-                        # add seq_idx back to new merged dict
-                        merged_motif_seqs[key_motif]['seq_idx'].extend(motif_seqs[motif]['seq_idx'])
+                if 'cond' in kwargs:
+                    cond = kwargs['cond'] # override
 
-                        # calculate new atten_region_pos after adding/subtracting offset 
-                        new_atten_region_pos = [(pos[0]+left_offset, pos[1]-right_offset) \
-                                                for pos in motif_seqs[motif]['atten_region_pos']]
-                        merged_motif_seqs[key_motif]['atten_region_pos'].extend(new_atten_region_pos)
+                if alignment.score >= cond: # exists key that can align
+                    alignments.append(alignment)
+                    key_motifs.append(key_motif)
 
-                else:
-                    alignment = alignments[best_idx[0]]
-                    key_motif = key_motifs[best_idx[0]]
+        if alignments: # if aligned, find out alignment with maximum score and proceed
+            best_score = max(alignments, key=lambda alignment: alignment.score)
+            best_idx = [i for i, score in enumerate(alignments) if score == best_score]
+
+            if align_all_ties:
+                for i in best_idx:
+                    alignment = alignments[i]
+                    key_motif = key_motifs[i]
 
                     # calculate offset to be added/subtracted from atten_region_pos
                     left_offset = alignment.aligned[0][0][0] - alignment.aligned[1][0][0] # always query - key
@@ -349,19 +340,43 @@ def merge_motifs(motif_seqs, min_len=5, align_all_ties=True, **kwargs):
                         (alignment.aligned[1][0][1] == len(key_motif)): # right shift
                         right_offset = len(motif) - alignment.aligned[0][0][1]
 
+                    new_motif_seq = motif_seqs[motif].copy()
                     # add seq_idx back to new merged dict
-                    merged_motif_seqs[key_motif]['seq_idx'].extend(motif_seqs[motif]['seq_idx'])
+                    merged_motif_seqs[key_motif]['seq_idx'].extend(new_motif_seq['seq_idx'])
 
-                    # calculate new atten_region_pos after adding/subtracting offset 
+                    # calculate new atten_region_pos after adding/subtracting offset
                     new_atten_region_pos = [(pos[0]+left_offset, pos[1]-right_offset) \
-                                            for pos in motif_seqs[motif]['atten_region_pos']]
+                                            for pos in new_motif_seq['atten_region_pos']]
                     merged_motif_seqs[key_motif]['atten_region_pos'].extend(new_atten_region_pos)
+                    merged_motif_dict[key_motif].extend([motif])
 
-            else: # cannot align to anything, add to new dict as independent key
-                merged_motif_seqs[motif] = motif_seqs[motif] # add new one
-    
-    return merged_motif_seqs
+            else:
+                alignment = alignments[best_idx[0]]
+                key_motif = key_motifs[best_idx[0]]
 
+                # calculate offset to be added/subtracted from atten_region_pos
+                left_offset = alignment.aligned[0][0][0] - alignment.aligned[1][0][0] # always query - key
+                if (alignment.aligned[0][0][1] <= len(motif)) & \
+                    (alignment.aligned[1][0][1] == len(key_motif)): # inside
+                    right_offset = len(motif) - alignment.aligned[0][0][1]
+                elif (alignment.aligned[0][0][1] == len(motif)) & \
+                    (alignment.aligned[1][0][1] < len(key_motif)): # left shift
+                    right_offset = alignment.aligned[1][0][1] - len(key_motif)
+                elif (alignment.aligned[0][0][1] < len(motif)) & \
+                    (alignment.aligned[1][0][1] == len(key_motif)): # right shift
+                    right_offset = len(motif) - alignment.aligned[0][0][1]
+
+                new_motif_seq = motif_seqs[motif].copy()
+                # add seq_idx back to new merged dict
+                merged_motif_seqs[key_motif]['seq_idx'].extend(new_motif_seq['seq_idx'])
+
+                # calculate new atten_region_pos after adding/subtracting offset 
+                new_atten_region_pos = [(pos[0]+left_offset, pos[1]-right_offset) \
+                                        for pos in new_motif_seq['atten_region_pos']]
+                merged_motif_seqs[key_motif]['atten_region_pos'].extend(new_atten_region_pos)
+                merged_motif_dict[key_motif].extend([motif])
+
+    return merged_motif_seqs, merged_motif_dict
 
 def make_window(motif_seqs, pos_seqs, window_size=24):
     """
@@ -411,15 +426,16 @@ def make_window(motif_seqs, pos_seqs, window_size=24):
 
     return new_motif_seqs
 
-
 ### make full pipeline
 def motif_analysis(pos_seqs,
                    neg_seqs,
                    pos_atten_scores,
                    window_size = 24,
-                   min_len = 4,
+                   min_len = 3,
+                   max_len = 9,
                    pval_cutoff = 0.005,
                    min_n_motif = 3,
+                   top_n_motif = 10,
                    align_all_ties = True,
                    save_file_dir = None,
                    **kwargs
@@ -455,14 +471,18 @@ def motif_analysis(pos_seqs,
         {motif: {seq_idx: idx, atten_region_pos: (start, end)}}
         where seq_idx indicates indices of pos_seqs containing a motif, and
         atten_region_pos indicates where the high attention region is located.
-    
     """ 
+    
     from Bio import motifs
     from Bio.Seq import Seq
     
     verbose = False
     if 'verbose' in kwargs:
         verbose = kwargs['verbose']
+        
+    kmer = 1
+    if 'kmer' in kwargs:
+        kmer = kwargs['kmer']
     
     if verbose:
         print("*** Begin motif analysis ***")
@@ -480,24 +500,28 @@ def motif_analysis(pos_seqs,
     ## find the motif regions
     if verbose:
         print("* Finding high attention motif regions")
+    
+    pos_atten_scores = pos_atten_scores[:, kmer:-kmer] # remove edges
+    mean_atten_values = np.mean(pos_atten_scores, axis=1) # threshold value for "high" attention
+    min_atten_values = np.min(pos_atten_scores, axis=1) * 10 # another threshold value for "high" attention
+    
+    min_len = min_len - kmer + 1
+    max_len = max_len - kmer + 1
     for i, score in enumerate(pos_atten_scores):
-        seq_len = len(pos_seqs[i])
-        score = score[0:seq_len]
-        
-        # handle kwargs
-        if 'atten_cond' in kwargs:
-            motif_regions = find_high_attention(score, min_len=min_len, cond=kwargs['atten_cond'])
-        else:
-            motif_regions = find_high_attention(score, min_len=min_len)
-            
+        motif_regions = find_high_attention(score, min_len, max_len, mean_atten_values[i], min_atten_values[i])
         for motif_idx in motif_regions:
+            motif_idx[0] = motif_idx[0] + kmer - 1
+            motif_idx[1] = motif_idx[1] + 2*(kmer - 1)
             seq = pos_seqs[i][motif_idx[0]:motif_idx[1]]
+            
             if seq not in motif_seqs:
                 motif_seqs[seq] = {'seq_idx': [i], 'atten_region_pos':[(motif_idx[0],motif_idx[1])]}
             else:
                 motif_seqs[seq]['seq_idx'].append(i)
                 motif_seqs[seq]['atten_region_pos'].append((motif_idx[0],motif_idx[1]))
-                
+
+    min_len = min_len + kmer - 1
+    max_len = max_len + kmer - 1
     
     # filter motifs
     return_idx = False
@@ -517,17 +541,19 @@ def motif_analysis(pos_seqs,
     motif_seqs = {k: motif_seqs[k] for k in motifs_to_keep}
     
     # merge motifs
+    merged_motif_dict = {}
     if verbose:
         print("* Filtered {} motifs".format(len(motifs_to_keep)))
         print("* Merging similar motif instances")
     if 'align_cond' in kwargs:
-        merged_motif_seqs = merge_motifs(motif_seqs, min_len=min_len, 
+        merged_motif_seqs, merged_motif_dict = merge_motifs(motif_seqs, min_len=min_len, 
                                          align_all_ties = align_all_ties,
                                          cond=kwargs['align_cond'])
     else:
-        merged_motif_seqs = merge_motifs(motif_seqs, min_len=min_len,
+        merged_motif_seqs, merged_motif_dict = merge_motifs(motif_seqs, min_len=min_len,
                                          align_all_ties = align_all_ties)
-    
+
+        
     # make fixed-length window sequences
     if verbose:
         print("* Left {} motifs".format(len(merged_motif_seqs)))
@@ -538,21 +564,39 @@ def motif_analysis(pos_seqs,
     if verbose:
         print("* Removing motifs with less than {} instances".format(min_n_motif))
     merged_motif_seqs = {k: coords for k, coords in merged_motif_seqs.items() if len(coords['seq_idx']) >= min_n_motif}
+    
+    # selecting top N motifs
+    if verbose:
+        print("* Selecting top {} motifs with highest number of instances".format(top_n_motif))
+    num_instances = [len(instances["seq_idx"]) for motif, instances in merged_motif_seqs.items()]
+    if len(num_instances)>top_n_motif:
+        minimum_num = sorted(num_instances)[-top_n_motif]
+        merged_motif_seqs = {k: coords for k, coords in merged_motif_seqs.items() if len(coords['seq_idx']) >= minimum_num}
 
     if save_file_dir is not None:
         if verbose:
             print("* Left {} motifs".format(len(merged_motif_seqs)))
             print("* Saving outputs to directory")
         os.makedirs(save_file_dir, exist_ok=True)
+        
+        with open(os.path.join(save_file_dir, 'motif_dict.txt'), 'w') as f:
+            for dict_item in merged_motif_dict:
+                f.write('{}: {}\n'.format(dict_item, merged_motif_dict[dict_item]))
+        
         for motif, instances in merged_motif_seqs.items():
             # saving to files
-            with open(save_file_dir+'/motif_{}_{}.txt'.format(motif, len(instances['seq_idx'])), 'w') as f:
+            with open(os.path.join(save_file_dir, 'motif_{:0=3}_{}.txt'.format(len(instances['seq_idx']), motif)), 'w') as f:
                 for seq in instances['seqs']:
                     f.write(seq+'\n')
             # make weblogo
             seqs = [Seq(v) for i,v in enumerate(instances['seqs'])]
             m = motifs.create(seqs)
-            m.weblogo(save_file_dir+"/motif_{}_{}_weblogo.png".format(motif, len(instances['seq_idx'])), format='png_print',
-                             show_fineprint=False, show_ends=False, color_scheme='color_classic')
+            
+            m.weblogo(os.path.join(save_file_dir, "motif_{:0=3}_{}_weblogo.png".format(len(instances['seq_idx']), motif)), 
+                      format='png_print', show_fineprint=False, show_ends=False, 
+                      show_errorbars=False, color_scheme="color_custom",
+                      symbols0="G", color0="orange", symbols1="A", color1="red",
+                      symbols2="C", color2="blue", symbols3="TU", color3="green")
     
     return merged_motif_seqs
+
