@@ -39,194 +39,39 @@ If you were conducting the RNA secondary structure analysis (section 4.4 of this
 # 3. Fine-tuning and evaluation
 ## 3.1 Download pre-trained DNABERT
 Download and unzip the pre-trained DNABERT3 by following the instruction [here](https://github.com/jerryji1993/DNABERT).
-If you have skipped 2.1 Data preprocessing, unzip our dataset file by running the following command.
-```
-tar xzf sample_dataset.tar.gz
-```
+If you have skipped 2.1 Data preprocessing, use the sample TIAL1 data in `sample_dataset`.
 
-## 3.2 Fine-tuning
-For each RBP, run the following script to train BERT-RBP. The generated model will be saved to the `$OUTPUT_PATH`. Change the name of RBP in `$DATA_PATH` and `$OUTPUT_PATH` as you would like. Use the additional argument, `--do_train_from_scratch`, to train BERT-baseline, whose model parameters were randomly initialized.  
-```
-cd examples
-
-export KMER=3
-export MODEL_PATH=PATH_TO_THE_PRETRAINED_DNABERT
-export DATA_PATH=../sample_dataset/TIAL1/training_sample_finetune
-export OUTPUT_PATH=../sample_dataset/TIAL1/finetuned_model
-
-python3 run_finetune_bertrbp.py \
-	--model_type dna \
-	--tokenizer_name=dna$KMER \
-	--model_name_or_path $MODEL_PATH \
-	--task_name dnaprom \
-	--do_train \
-	--do_eval \
-	--data_dir $DATA_PATH \
-	--max_seq_length 101 \
-	--per_gpu_eval_batch_size=32   \
-	--per_gpu_train_batch_size=32   \
-	--learning_rate 2e-4 \
-	--num_train_epochs 3 \
-	--output_dir $OUTPUT_PATH \
-	--evaluate_during_training \
-	--logging_steps 100 \
-	--warmup_percent 0.1 \
-	--hidden_dropout_prob 0.1 \
-	--overwrite_output \
-	--weight_decay 0.01 \
-	--n_process 8 \
-	--num_gpu 4 \
-	--num_node 1
-```
-## 3.3 Measure prediction performance
-Run the following script to compute the prediction performance of each BERT-RBP. Scores will be recorded as `eval_results_prediction.txt` file in the `$MODEL_PATH`. 
-```
-export KMER=3
-export MODEL_PATH=../sample_dataset/TIAL1/finetuned_model
-export DATA_PATH=../sample_dataset/TIAL1/test_sample_finetune
-
-python3 run_finetune_bertrbp.py \
-	--model_type dna \
-	--tokenizer_name dna$KMER \
-	--model_name_or_path $MODEL_PATH \
-	--task_name dnaprom \
-	--do_eval \
-	--do_predict \
-	--data_dir $DATA_PATH \
-	--output_dir $MODEL_PATH \
-	--predict_dir $MODEL_PATH \
-	--max_seq_length 101 \
-	--per_gpu_eval_batch_size 32 \
-	--per_gpu_train_batch_size 32 \
-	--overwrite_output \
-	--num_gpu 4 \
-	--num_node 1
-```
+## 3.2 Fine-tuning and prediction
+For each RBP, run `./scripts/train_and_test.sh` to train BERT-RBP. The generated model will be saved to the `$OUTPUT_PATH`. Change the name of RBP in `$DATA_PATH` and `$OUTPUT_PATH` as you would like. Use the additional argument, `--do_train_from_scratch`, to train BERT-baseline, whose model parameters will be randomly initialized.  
 
 # 4. Attention analysis
 ## 4.1 Region type annotation
-For TIAL1 and EWSR1, annotation files are contained in the `sample_dataset/RBP/nontraining_sample_finetune` as `annotations.npy`. When creating annotation files of your interest, refer to the above file format or see the instruction in the `annotations.ipynb` file.
+For TIAL1, annotation file is contained in the `sample_dataset/TIAL1/nontraining_sample_finetune/hg38` as `annotations_binary.npy`. When creating annotation files of your interest, refer to the above file format or see the instruction in the `annotations.ipynb` file.
 
 ## 4.2 Region type analysis
-After fine-tuning, you can conduct region type analysis on the specified BERT-RBP  by running: 
-```
-export RBP=TIAL1
-export MODEL_PATH=../sample_dataset/TIAL1/finetuned_model
-export DATA_PATH=../sample_dataset/TIAL1/nontraining_sample_finetune
-export PRED_PATH=../sample_dataset/TIAL1/finetuned_model/analyze_regiontype 
+After fine-tuning, you can conduct region type analysis on the specified BERT-RBP by running `./scripts/analyze_regiontype.sh`.
 
-python3 run_finetune_bertrbp.py \
-	--model_type dna \
-	--tokenizer_name dna3 \
-	--model_name_or_path $MODEL_PATH \
-	--task_name dnaprom \
-	--do_analyze_regiontype \
-	--data_dir $DATA_PATH \
-	--max_seq_length 101 \
-	--per_gpu_pred_batch_size 128 \
-	--output_dir $MODEL_PATH \
-	--predict_dir $PRED_PATH \
-	--n_process 8 \
-	--num_gpu 1 \
-	--num_node 1 \
-	--region_type 0 \
-	--rbp_name $RBP
-```
-The results of the analysis will be exported to the `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file. For detailed analysis, replace the `--do_analyze_regiontype` to `--do_analyze_regiontype_specific`.
+The results of the analysis will be exported to the `./sample_dataset/TIAL1/finetuned_model/analyze_reigontype/` , which is defined as `$PRED_PATH` in the script. To visualize the results, follow the instruction in the `visualization.ipynb` file.
 
-## 4.3 Region boundary analysis
-Region boundary analysis for each BERT-RBP can be conducted by running:
-```
-export MODEL_PATH=../sample_dataset/EWSR1/finetuned_model
-export DATA_PATH=../sample_dataset/EWSR1/nontraining_sample_finetune
-export PRED_PATH=../sample_dataset/EWSR1/finetuned_model/analyze_regionboundary 
+## 4.3 Secondary structure analysis
+Note that you need to install LinearPartition before this section. First, generate RNA secondary structure labels by running `./scripts/generate_2dstructure.sh`. RNA secondary structure analysis for each BERT-RBP can be conducted by running `./scripts/analyze_2dstructure.sh`.
 
-python3 run_finetune_bertrbp.py \
-	--model_type dna \
-	--tokenizer_name dna3 \
-	--model_name_or_path $MODEL_PATH \
-	--task_name dnaprom \
-	--do_analyze_regionboundary \
-	--data_dir $DATA_PATH \
-	--max_seq_length 101 \
-	--per_gpu_pred_batch_size 128 \
-	--output_dir $MODEL_PATH \
-	--predict_dir $PRED_PATH \
-	--n_process 8 \
-	--num_gpu 1 \
-	--num_node 1  \
-	--rbp_name $RBP
-```
-The results of the analysis will be exported to the `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file. When you further conduct detailed analysis, replace the `--do_analyze_regionboundary` to `--do_analyze_regionboundary_specific`.
-
-## 4.4 Secondary structure analysis
-Note that you need to install LinearPartition before this section. RNA secondary structure analysis for each BERT-RBP can be conducted by running:
-```
-export MODEL_PATH=../datasets/HNRNPK/finetuned_model
-export DATA_PATH=../datasets/HNRNPK/nontraining_sample_finetune
-export PRED_PATH=../datasets/HNRNPK/finetuned_model/analyze_rnastructure
-export LINEARPARTITION_PATH=PATH_TO_LINEARPARTITION
-
-python3 run_finetune_bertrbp.py \
-	--model_type dna \
-	--tokenizer_name dna3 \
-	--model_name_or_path $MODEL_PATH \
-	--task_name dnaprom \
-	--do_analyze_rnastructure \
-	--data_dir $DATA_PATH \
-	--max_seq_length 101 \
-	--per_gpu_pred_batch_size 128 \
-	--output_dir $MODEL_PATH \
-	--predict_dir $PRED_PATH \
-	--path_to_linearpartition $LINEARPARTITION_PATH \
-	--n_process 8 \
-	--num_gpu 1 \
-	--num_node 1 \
-	--rbp_name $RBP
-```
-The results of the analysis will be exported to the `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file. When you further conduct detailed analysis, replace the `--do_analyze_rnastructure` with `--do_analyze_rnastructure_specific`.
+The results of the analysis will be exported to the `./sample_dataset/TIAL1/finetuned_model/analyze_rnastructure/` , which is defined as `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file.
 
 # 5. Citations
 If you used BERT-RBP in your research, please cite the following paper.
 
 ```
-@UNPUBLISHED{Yamada2021-ql,
-  title    = "Prediction of {RNA-protein} interactions using a nucleotide
-              language model",
-  author   = "Yamada, Keisuke and Hamada, Michiaki",
-  journal  = "bioRxiv",
-  pages    = "2021.04.27.441365",
-  month    =  apr,
-  year     =  2021,
-  language = "en"
-}
-```
-
-Also, the following papers are major prior works on which our research is based.
-```
-@ARTICLE{Ji2021-ie,
-  title    = "{DNABERT}: pre-trained Bidirectional Encoder Representations from Transformers model for {DNA-language} in genome",
-  author   = "Ji, Yanrong and Zhou, Zhihan and Liu, Han and Davuluri, Ramana V",
-  journal  = "Bioinformatics",
-  pages    = "2020.09.17.301879",
-  month    =  feb,
-  year     =  2021,
-  language = "en",
-  url     = "http://dx.doi.org/10.1093/bioinformatics/btab083"
-}
-```
-```
-@ARTICLE{Pan2020-he,
-  title     = "{RBPsuite}: {RNA-protein} binding sites prediction suite based
-               on deep learning",
-  author    = "Pan, Xiaoyong and Fang, Yi and Li, Xianfeng and Yang, Yang and Shen, Hong-Bin",
-  journal   = "BMC genomics",
-  volume    =  21,
-  number    =  1,
-  pages     = "884",
-  month     =  dec,
-  year      =  2020,
-  language  = "en",
-  url    = "http://dx.doi.org/10.1186/s12864-020-07291-6"
+@article{10.1093/bioadv/vbac023,
+    author = {Yamada, Keisuke and Hamada, Michiaki},
+    title = "{Prediction of RNA-protein interactions using a nucleotide language model}",
+    journal = {Bioinformatics Advances},
+    year = {2022},
+    month = {04},
+    issn = {2635-0041},
+    doi = {10.1093/bioadv/vbac023},
+    url = {https://doi.org/10.1093/bioadv/vbac023},
+    note = {vbac023},
+    eprint = {https://academic.oup.com/bioinformaticsadvances/advance-article-pdf/doi/10.1093/bioadv/vbac023/43296569/vbac023.pdf},
 }
 ```
