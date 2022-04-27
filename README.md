@@ -69,6 +69,7 @@ The results of the analysis will be exported to the `./sample_dataset/TIAL1/fine
 Note that you need to install LinearPartition before this section. First, generate RNA secondary structure labels by running `scripts/generate_2dstructure.sh`. RNA secondary structure analysis for each BERT-RBP can be conducted by using `scripts/analyze_2dstructure.sh`.
 
 ```
+source generate_2dstructure.sh TIAL1 PATH_YOU_SAVED_LINEARPARTITION
 source analyze_2dstructure.sh TIAL1
 ```
 The results of the analysis will be exported to the `./sample_dataset/TIAL1/finetuned_model/analyze_rnastructure/` , which is defined as `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file.
