@@ -3,9 +3,9 @@
 PYTHON_PATH=../examples/run_analysis_regiontype.py
 ORIG_PATH=../sample_dataset/
 
-# RBP=$1
-# echo "RBP: "$RBP
-RBP=TIAL1
+RBP=$1
+echo "RBP: "$RBP
+# RBP=TIAL1
 
 MODEL_PATH=$ORIG_PATH$RBP/finetuned_model
 

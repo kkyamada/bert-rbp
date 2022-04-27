@@ -1,9 +1,9 @@
 #!/bin/bash
 ORIG_PATH=../sample_dataset/
 
-# RBP=$1
-# echo $RBP
-RBP=TIAL1
+RBP=$1
+echo $RBP
+# RBP=TIAL1
 
 PYTHON_PATH=../examples/run_analysis_motif.py
 MODEL_PATH=$ORIG_PATH$RBP/finetuned_model
