@@ -4,11 +4,12 @@ ORIG_PATH=../sample_dataset/
 PYTHON_PATH=../examples/run_finetune.py
 KMER=3
 
-# RBP=$1
-# echo $RBP
-RBP=TIAL1
+RBP=$1
+# RBP=TIAL1
 
-MODEL_PATH="ENTER THE PATH YOU SAVED DNABERT (such as 3-new-12w-0)"
+MODEL_PATH=$2
+# MODEL_PATH="ENTER THE PATH YOU SAVED DNABERT (such as 3-new-12w-0)"
+
 DATA_PATH=$ORIG_PATH$RBP/training_sample_finetune/
 OUTPUT_PATH=$ORIG_PATH$RBP/finetuned_model/
 
