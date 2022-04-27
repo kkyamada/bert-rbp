@@ -1,0 +1,30 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+torch = "==1.4.0"
+torchvision = "==0.5.0"
+tensorboard = "*"
+scikit-learn = "==0.22.2"
+seqeval = "*"
+pyahocorasick = "*"
+scipy = "*"
+statsmodels = "*"
+biopython = "*"
+pandas = "*"
+pybedtools = "*"
+sentencepiece = "==0.1.91"
+boto3 = "*"
+filelock = "*"
+tokenizers = "*"
+sacremoses = "*"
+matplotlib = "*"
+seaborn = "*"
+tensorboardX = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
