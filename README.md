@@ -47,19 +47,24 @@ Download and unzip the pre-trained DNABERT3 by following the instruction [here](
 If you have skipped 2.1 Data preprocessing, use the sample TIAL1 data in `sample_dataset`.
 
 ## 3.2 Fine-tuning and prediction
-For each RBP, run `./scripts/train_and_test.sh` to train BERT-RBP. The generated model will be saved to the `$OUTPUT_PATH`. Change the name of RBP in `$DATA_PATH` and `$OUTPUT_PATH` as you would like. Use the additional argument, `--do_train_from_scratch`, to train BERT-baseline, whose model parameters will be randomly initialized.  
+For each RBP, use `./scripts/train_and_test.sh` by running the following command to train BERT-RBP.
+```
+cd scripts
+source trian_and_test.sh TIAL1 PATH_YOU_SAVED_DNABERT
+```
+The generated model will be saved to the `$OUTPUT_PATH`. Modify the bash file to change the name of RBP in `$DATA_PATH` and `$OUTPUT_PATH` as you would like. Use the additional argument, `--do_train_from_scratch`, to train BERT-baseline, whose model parameters will be randomly initialized.  
 
 # 4. Attention analysis
 ## 4.1 Region type annotation
 For TIAL1, annotation file is contained in the `sample_dataset/TIAL1/nontraining_sample_finetune/hg38` as `annotations_binary.npy`. When creating annotation files of your interest, refer to the above file format or see the instruction in the `annotations.ipynb` file.
 
 ## 4.2 Region type analysis
-After fine-tuning, you can conduct region type analysis on the specified BERT-RBP by running `./scripts/analyze_regiontype.sh`.
+After fine-tuning, you can conduct region type analysis on the specified BERT-RBP by using `./scripts/analyze_regiontype.sh`.
 
 The results of the analysis will be exported to the `./sample_dataset/TIAL1/finetuned_model/analyze_reigontype/` , which is defined as `$PRED_PATH` in the script. To visualize the results, follow the instruction in the `visualization.ipynb` file.
 
 ## 4.3 Secondary structure analysis
-Note that you need to install LinearPartition before this section. First, generate RNA secondary structure labels by running `./scripts/generate_2dstructure.sh`. RNA secondary structure analysis for each BERT-RBP can be conducted by running `./scripts/analyze_2dstructure.sh`.
+Note that you need to install LinearPartition before this section. First, generate RNA secondary structure labels by running `./scripts/generate_2dstructure.sh`. RNA secondary structure analysis for each BERT-RBP can be conducted by using `./scripts/analyze_2dstructure.sh`.
 
 The results of the analysis will be exported to the `./sample_dataset/TIAL1/finetuned_model/analyze_rnastructure/` , which is defined as `$PRED_PATH`. To visualize the results, follow the instruction in the `visualization.ipynb` file.
 
