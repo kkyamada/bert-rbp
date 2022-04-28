@@ -6,8 +6,6 @@ For building BERT-RBP:
 [DNABERT](https://github.com/jerryji1993/DNABERT)
 For analyzing BERT-RBP:
 [LinearPartition](https://github.com/LinearFold/LinearPartition)
-
-## 1.1 Install requirements
 We have tested our program in the following environments.
 ```
 Linux: x86_64
@@ -23,6 +21,7 @@ CUDA Version: 10.0
 Nvidia Driver Version: 440.33.01
 ```
 
+## 1.1 Install requirements
 Install the required packages by running:
 ```
 git clone https://github.com/kkyamada/bert-rbp
