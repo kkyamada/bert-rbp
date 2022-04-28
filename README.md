@@ -8,6 +8,21 @@ For analyzing BERT-RBP:
 [LinearPartition](https://github.com/LinearFold/LinearPartition)
 
 ## 1.1 Install requirements
+We have tested our program in the following environments.
+```
+Linux: x86_64
+GPU: NVIDIA Tesla V100 SXM2
+CUDA Version: 10.0
+Nvidia Driver Version: 440.33.01
+```
+and
+```
+Linux: x86_64
+GPU: NVIDIA Tesla V100 DGXS
+CUDA Version: 10.0
+Nvidia Driver Version: 440.33.01
+```
+
 Install the required packages by running:
 ```
 git clone https://github.com/kkyamada/bert-rbp
