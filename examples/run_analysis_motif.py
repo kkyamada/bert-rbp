@@ -83,7 +83,7 @@ def set_seed(args):
 def _sorted_checkpoints(args, checkpoint_prefix="checkpoint", use_mtime=False) -> List[str]:
     ordering_and_checkpoint_path = []
 
-    glob_checkpoints = glob.glob(os.path.join(args.output_dir, "{}-*".format(checkpoint_prefix)))
+    glob_checkpoints = glob.glob(os.path.join(args.predict_dir, "{}-*".format(checkpoint_prefix)))
 
     for path in glob_checkpoints:
         if use_mtime:

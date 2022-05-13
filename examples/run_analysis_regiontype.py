@@ -81,7 +81,7 @@ def set_seed(args):
 def _sorted_checkpoints(args, checkpoint_prefix="checkpoint", use_mtime=False) -> List[str]:
     ordering_and_checkpoint_path = []
 
-    glob_checkpoints = glob.glob(os.path.join(args.output_dir, "{}-*".format(checkpoint_prefix)))
+    glob_checkpoints = glob.glob(os.path.join(args.predict_dir, "{}-*".format(checkpoint_prefix)))
 
     for path in glob_checkpoints:
         if use_mtime:
@@ -795,33 +795,6 @@ def main():
     # regiontype analysis
     if (args.do_analyze_regiontype or args.do_analyze_regiontype_specific) and args.local_rank in [-1, 0] and not args.do_cache:
         kmer = 3
-        output_dir = args.output_dir.replace("/690", "/690/" + str(kmer))
-        # checkpoint_name = os.listdir(output_dir)[0]
-        # output_dir = os.path.join(output_dir, checkpoint_name)
-
-        tokenizer = tokenizer_class.from_pretrained(
-            "dna"+str(kmer),
-            do_lower_case=args.do_lower_case,
-            cache_dir=args.cache_dir if args.cache_dir else None,
-        )
-        checkpoint = output_dir
-        logger.info("Calculate attention score using the following checkpoint: %s", checkpoint)
-        prefix = checkpoint.split("/")[-1] if checkpoint.find("checkpoint") != -1 else ""
-        config = config_class.from_pretrained(
-            output_dir,
-            num_labels=num_labels,
-            finetuning_task=args.task_name,
-            cache_dir=args.cache_dir if args.cache_dir else None,
-        )
-        #config.output_hidden_states = True
-        config.output_attentions = True
-        model = model_class.from_pretrained(
-            checkpoint,
-            from_tf=bool(".ckpt" in args.model_name_or_path),
-            config=config,
-            cache_dir=args.cache_dir if args.cache_dir else None,
-        )
-        model.to(args.device)
         
         if args.do_analyze_regiontype_specific:
             args.num_bins = 15
