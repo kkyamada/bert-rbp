@@ -67,6 +67,7 @@ cd scripts
 source trian_and_test.sh TIAL1 PATH_YOU_SAVED_DNABERT
 ```
 The generated model will be saved to the `$OUTPUT_PATH`. Modify the bash file to change the name of RBP in `$DATA_PATH` and `$OUTPUT_PATH` as you would like. Use the additional argument, `--do_train_from_scratch`, to train BERT-baseline, whose model parameters will be randomly initialized.  
+In our setting, we trained the model using 4 GPUs with the batch size of 32. When you train the model, make sure the total batch size (number of GPU * batch size per GPU * gradient acculumation steps) is >= 128.
 
 # 4. Attention analysis
 ## 4.1 Region type annotation
