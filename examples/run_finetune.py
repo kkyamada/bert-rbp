@@ -210,6 +210,7 @@ def train(args, train_dataset, model, tokenizer):
 
     # multi-gpu training (should be after apex fp16 initialization)
     if args.n_gpu > 1:
+        logger.info("Applying DataParallel using {} gpus".format(args.n_gpu))
         model = torch.nn.DataParallel(model)
 
     # Distributed training (should be after apex fp16 initialization)
@@ -529,15 +530,16 @@ def predict(args, model, tokenizer, prefix=""):
         elif args.output_mode == "regression":
             preds = np.squeeze(preds)
 
-        result = compute_metrics(pred_task, preds, out_label_ids, probs)
+        # result = compute_metrics(pred_task, preds, out_label_ids, probs)
         
         pred_output_dir = args.predict_dir
         if not os.path.exists(pred_output_dir):
                os.makedir(pred_output_dir)
         output_pred_file = os.path.join(pred_output_dir, "pred_results.npy")
-        logger.info("***** Pred results {} *****".format(prefix))
-        for key in sorted(result.keys()):
-            logger.info("  %s = %s", key, str(result[key]))
+        # logger.info("***** Pred results {} *****".format(prefix))
+        # for key in sorted(result.keys()):
+        #    logger.info("  %s = %s", key, str(result[key]))
+        logger.info("Saved pred results to {}".format(output_pred_file))
         np.save(output_pred_file, probs)
 
 
