@@ -67,7 +67,7 @@ cd scripts
 source trian_and_test.sh TIAL1 PATH_YOU_SAVED_DNABERT
 ```
 The generated model will be saved to the `$OUTPUT_PATH`. Modify the bash file to change the name of RBP in `$DATA_PATH` and `$OUTPUT_PATH` as you would like. Use the additional argument, `--do_train_from_scratch`, to train BERT-baseline, whose model parameters will be randomly initialized.  
-In our setting, we trained the model using 4 GPUs with the batch size of 32. When you train the model, make sure the total batch size (number of GPU * batch size per GPU * gradient acculumation steps) is >= 128.
+In our setting, we trained the model using 4 GPUs with the batch size of 32. When you train the model, make sure the total batch size (number of GPU * batch size per GPU * gradient acculumation steps) is >= 128.  
 If you were to conduct prediction on sequences whose labels are unknown, first create `dev.tsv` file in the same format as those in the sample dataset. (Set their labels (0 or 1) arbitarily as they were not used during prediction anyway.) Then, run the following command, and it will generate the prediction in `pred_results.npy`. This .npy file will contain a matrix of 2 * (number of sequences), where each row represents scores for label0 and label1 such that (label0 score) + (label1 score) = 1.0 for each sequence.
 ```
 cd scripts
